@@ -96,3 +96,37 @@ def train_neural_network(x):
             epoch +=1
 
 train_neural_network(x)
+
+def test_neural_network():
+    prediction = neural_network_model(x)
+    with tf.Session() as sess:
+        sess.run(tf.initialize_all_variables())
+        for epoch in range(hm_epochs):
+            try:
+                saver.restore(sess,"model.ckpt")
+            except Exception as e:
+                print(str(e))
+            epoch_loss = 0
+            
+        correct = tf.equal(tf.argmax(prediction, 1), tf.argmax(y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct, 'float'))
+        feature_sets = []
+        labels = []
+        counter = 0
+        with open('processed-test-set.csv', buffering=20000) as f:
+            for line in f:
+                try:
+                    features = list(eval(line.split('::')[0]))
+                    label = list(eval(line.split('::')[1]))
+                    feature_sets.append(features)
+                    labels.append(label)
+                    counter += 1
+                except:
+                    pass
+        print('Tested',counter,'samples.')
+        test_x = np.array(feature_sets)
+        test_y = np.array(labels)
+        print('Accuracy:',accuracy.eval({x:test_x, y:test_y}))
+
+
+test_neural_network()
